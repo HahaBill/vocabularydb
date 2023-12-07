@@ -80,6 +80,13 @@ async def update_task(put_task_request: PutTaskRequest):
     return {"update_task_id": put_task_request.task_id}
 
 
+@app.delete("/delete-task/{task_id}")
+async def delete_task(task_id: str):
+    table = _get_table()
+    table.delete_item(Key={"task_id": task_id})
+    return {"deleted_task_id": task_id}
+
+
 def _get_table():
     table_name = os.environ.get("TABLE_NAME")
     return boto3.resource("dynamodb").Table(table_name)
