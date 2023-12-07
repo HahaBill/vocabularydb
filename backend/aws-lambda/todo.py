@@ -1,7 +1,8 @@
 import os
 import time
-from uuid import uuid4
 import boto3
+from boto3.dynamodb.conditions import Key
+from uuid import uuid4
 from fastapi import FastAPI, HTTPException
 from mangum import Mangum
 from pydantic import BaseModel
@@ -49,6 +50,19 @@ async def get_task(task_id: str):
     if not item:
         raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
     return item
+
+
+@app.get("/list-tasks/{user_id}")
+async def list_tasks(user_id: str):
+    table = _get_table()
+    response = table.query(
+        IndexName="user-index",
+        KeyConditionExpression=Key("user_id").eq(user_id),
+        ScanIndexForward=False,
+        Limit=10,
+    )
+    tasks = response.get("Items")
+    return {"tasks": tasks}
 
 
 def _get_table():
