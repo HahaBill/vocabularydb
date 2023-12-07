@@ -2,7 +2,7 @@ import os
 import time
 from uuid import uuid4
 import boto3
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from mangum import Mangum
 from pydantic import BaseModel
 from typing import Optional
@@ -38,6 +38,17 @@ async def create_task(put_task_request: PutTaskRequest):
     table = _get_table()
     table.put_item(Item=item)
     return {"task": item}
+
+
+@app.get("/get-task/{task_id}")
+async def get_task(task_id: str):
+    table = _get_table()
+    response = table.get_item(Key={"task_id": task_id})
+    item = response.get("Item")
+
+    if not item:
+        raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
+    return item
 
 
 def _get_table():
