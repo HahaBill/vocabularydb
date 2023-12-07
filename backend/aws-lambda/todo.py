@@ -65,6 +65,21 @@ async def list_tasks(user_id: str):
     return {"tasks": tasks}
 
 
+@app.put("/update-task")
+async def update_task(put_task_request: PutTaskRequest):
+    table = _get_table()
+    table.update_item(
+        Key={"task_id": put_task_request.task_id},
+        UpdateExpression="SET content = :content, is_done = :is_done",
+        ExpressionAttributeValues={
+            ":content": put_task_request.content,
+            ":is_done": put_task_request.is_done,
+        },
+        ReturnValues="ALL_NEW",
+    )
+    return {"update_task_id": put_task_request.task_id}
+
+
 def _get_table():
     table_name = os.environ.get("TABLE_NAME")
     return boto3.resource("dynamodb").Table(table_name)
