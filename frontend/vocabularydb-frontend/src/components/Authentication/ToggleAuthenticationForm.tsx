@@ -17,10 +17,12 @@ import { GoogleButton } from './GoogleButton';
 import { TwitterButton } from './TwitterButton';
 import { checkSignedState, updateUserId } from '../../redux-state/user/userSlice';
 import { useDispatch} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function ToggleAuthenticationForm(props: any) {
     const [type, toggle] = useToggle(['login', 'register']);
     const authDispatch = useDispatch();
+    const navigate = useNavigate();
     const form = useForm({
         initialValues: {
             email: '',
@@ -38,6 +40,7 @@ function ToggleAuthenticationForm(props: any) {
     const handleSubmit = (values) => {
       authDispatch(updateUserId( values.email));
       authDispatch(checkSignedState(true));
+      navigate('/home');
     }
 
     return (

@@ -9,8 +9,11 @@ function Home() {
     return (
         <div>
             <h1>
-                {userId}
+                USER ID: {userId}
             </h1>
+            <p>
+                lololololol
+            </p>
         </div>
     )
 }
