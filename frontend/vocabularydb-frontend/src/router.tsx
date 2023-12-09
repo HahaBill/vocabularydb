@@ -9,7 +9,7 @@ export const routes = [
         path: '/',
         element: <Root/>,
         children: [
-            { index: true, element: <Navigate to="/home" /> },
+            { index: true, element: <Navigate to="/home"/> },
             {
                 path: 'home',
                 element:

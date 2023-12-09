@@ -33,7 +33,7 @@ function ToggleAuthenticationForm(props: any) {
 
         validate: {
             email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-            password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
+            // password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
         },
     });
 
@@ -60,6 +60,7 @@ function ToggleAuthenticationForm(props: any) {
           <Stack>
             {type === 'register' && (
               <TextInput
+                disabled
                 label="Name"
                 placeholder="Ton Hoang Nguyen (Bill)"
                 value={form.values.name}
@@ -79,7 +80,7 @@ function ToggleAuthenticationForm(props: any) {
             />
 
             <PasswordInput
-              required
+              disabled
               label="Password"
               placeholder="Your password"
               value={form.values.password}
