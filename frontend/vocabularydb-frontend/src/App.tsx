@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from './redux-state/store';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
+import Home from './routes/home';
 
 function App() {
   const isSigned = useSelector((state: RootState) => state.user.isSigned);
@@ -16,7 +17,7 @@ function App() {
   }
 
   return (
-      <RouterProvider router={router}/>
+      <Home/>
   )
 }
 

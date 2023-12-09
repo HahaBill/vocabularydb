@@ -15,9 +15,12 @@ import {
 
 import { GoogleButton } from './GoogleButton';
 import { TwitterButton } from './TwitterButton';
+import { checkSignedState, updateUserId } from '../../redux-state/user/userSlice';
+import { useDispatch} from 'react-redux';
 
 function ToggleAuthenticationForm(props: any) {
     const [type, toggle] = useToggle(['login', 'register']);
+    const authDispatch = useDispatch();
     const form = useForm({
         initialValues: {
             email: '',
@@ -32,6 +35,11 @@ function ToggleAuthenticationForm(props: any) {
         },
     });
 
+    const handleSubmit = (values) => {
+      authDispatch(updateUserId( values.email));
+      authDispatch(checkSignedState(true));
+    }
+
     return (
       <Paper radius="md" p="xl" withBorder {...props}>
         <Text size="lg" fw={500}>
@@ -45,7 +53,7 @@ function ToggleAuthenticationForm(props: any) {
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />
 
-        <form onSubmit={form.onSubmit(() => {})}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             {type === 'register' && (
               <TextInput

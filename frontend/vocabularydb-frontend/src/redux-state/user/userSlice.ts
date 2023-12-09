@@ -14,8 +14,8 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        updateUserId: (state, action: PayloadAction<{ newUserId: string}>) => {
-            state.userId = action.payload.newUserId;
+        updateUserId: (state, action: PayloadAction<string>) => {
+            state.userId = action.payload;
         },
         checkSignedState: (state, action: PayloadAction<boolean>) => {
             state.isSigned = action.payload;
