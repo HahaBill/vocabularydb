@@ -17,9 +17,11 @@
     "@mantine/notifications": "^7.3.0",
     "@mantine/nprogress": "^7.3.0",
     "@mantinex/dev-icons": "^1.0.2",
+    "@reduxjs/toolkit": "^2.0.1",
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^9.0.2",
     "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
