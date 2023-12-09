@@ -3,7 +3,10 @@ import ToggleAuthenticationForm from '../../components/Authentication/ToggleAuth
 import VocabularyDBImage from '../../assets/landscape_dalle.png'
 import VocabularyDBIcon from '../../assets/vocabularydb_icon.png'
 
+import { useDispatch } from 'react-redux';
+
 function AuthPage() {
+    const dispatch = useDispatch();
 
     return (
         <div className='absolute left-0 top-0 h-full w-full flex items-center justify-center'>
@@ -15,7 +18,7 @@ function AuthPage() {
                     <img className='h-36 w-36' src={VocabularyDBIcon} alt='Image'/>
                 </div>
                 <div className='absolute'>
-                    <ToggleAuthenticationForm/>
+                    <ToggleAuthenticationForm dispatch={dispatch} />
                 </div>
             </div>
         </div>

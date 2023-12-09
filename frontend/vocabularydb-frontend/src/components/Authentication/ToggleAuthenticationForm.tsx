@@ -6,7 +6,6 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
   Button,
   Divider,
   Checkbox,
@@ -17,7 +16,7 @@ import {
 import { GoogleButton } from './GoogleButton';
 import { TwitterButton } from './TwitterButton';
 
-function ToggleAuthenticationForm(props: PaperProps) {
+function ToggleAuthenticationForm(props: any) {
     const [type, toggle] = useToggle(['login', 'register']);
     const form = useForm({
         initialValues: {
