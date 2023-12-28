@@ -13,46 +13,52 @@ handler = Mangum(app)
 
 
 class PutVocabularyRequest(BaseModel):
-    content: str
+    vocab_definition: str
+    vocab_example: str
+    vocab_name: str
     user_id: Optional[str] = None
-    task_id: Optional[str] = None
-    is_done: bool = False
+    vocab_id: Optional[str] = None
+    isLearned: bool = False
 
 
 @app.get("/")
 def root():
-    return {"message": "Hello World from Todo API"}
+    return {"message": "Welcome to VocabularyDB"}
 
 
-@app.put("/create-task")
-async def create_task(put_task_request: PutVocabularyRequest):
+@app.put("/create-vocab")
+async def create_vocabulary(put_vocab_request: PutVocabularyRequest):
     created_time = int(time.time())
     item = {
-        "user_id": put_task_request.user_id,
-        "content": put_task_request.content,
-        "is_done": False,
+        "user_id": put_vocab_request.user_id,
+        "vocab_definition": put_vocab_request.vocab_definition,
+        "vocab_example": put_vocab_request.vocab_example,
+        "vocab_name": put_vocab_request.vocab_name,
+        "isLearned": False,
         "created_time": created_time,
-        "task_id": f"task_{uuid4().hex}",
+        "vocab_id": f"vocabulary_{uuid4().hex}",
         "ttl": int(created_time + 86400),  # Expire after 24 hours
     }
 
     table = _get_table()
     table.put_item(Item=item)
-    return {"task": item}
+    return {"vocabulary": item}
 
 
-@app.get("/get-task/{task_id}")
-async def get_task(task_id: str):
+@app.get("/get-vocabulary/{vocabulary_id}")
+async def get_vocabulary(vocabulary_id: str):
     table = _get_table()
-    response = table.get_item(Key={"task_id": task_id})
+    response = table.get_item(Key={"vocab_id": vocabulary_id})
     item = response.get("Item")
 
     if not item:
-        raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Vocabulary {vocabulary_id} not found"
+        )
     return item
 
 
-@app.get("/list-tasks/{user_id}")
+@app.get("/list-vocabulary-learned/{user_id}")
 async def list_tasks(user_id: str):
     table = _get_table()
     response = table.query(
@@ -61,30 +67,31 @@ async def list_tasks(user_id: str):
         ScanIndexForward=False,
         Limit=10,
     )
-    tasks = response.get("Items")
-    return {"tasks": tasks}
+    vocabularies = response.get("Items")
+    return {"vocabularies": vocabularies}
 
 
-@app.put("/update-task")
-async def update_task(put_task_request: PutVocabularyRequest):
+@app.put("/update-vocabulary")
+async def update_task(put_vocab_request: PutVocabularyRequest):
     table = _get_table()
     table.update_item(
-        Key={"task_id": put_task_request.task_id},
-        UpdateExpression="SET content = :content, is_done = :is_done",
+        Key={"vocabulary_id": put_vocab_request.vocab_id},
+        UpdateExpression="SET vocab_definition = :vocab_definition, isLearned = :isLearned, vocab_example = :vocab_example",
         ExpressionAttributeValues={
-            ":content": put_task_request.content,
-            ":is_done": put_task_request.is_done,
+            ":vocab_definition": put_vocab_request.vocab_definition,
+            ":isLearned": put_vocab_request.isLearned,
+            "vocab_example": put_vocab_request.vocab_example,
         },
         ReturnValues="ALL_NEW",
     )
-    return {"update_task_id": put_task_request.task_id}
+    return {"update_task_id": put_vocab_request.task_id}
 
 
-@app.delete("/delete-task/{task_id}")
-async def delete_task(task_id: str):
+@app.delete("/delete-vocab/{vocab_id}")
+async def delete_task(vocab_id: str):
     table = _get_table()
-    table.delete_item(Key={"task_id": task_id})
-    return {"deleted_task_id": task_id}
+    table.delete_item(Key={"vocab_id": vocab_id})
+    return {"deleted_task_id": vocab_id}
 
 
 def _get_table():

@@ -8,8 +8,8 @@ export class AwsStackStack extends cdk.Stack {
     super(scope, id, props);
 
     // DynamoDB Table
-    const table = new ddb.Table(this, "Tasks", {
-      partitionKey: { name: "task_id", type: ddb.AttributeType.STRING },
+    const table = new ddb.Table(this, "Vocabularies", {
+      partitionKey: { name: "vocab_id", type: ddb.AttributeType.STRING },
       billingMode: ddb.BillingMode.PAY_PER_REQUEST,
       timeToLiveAttribute: "ttl",
     });
@@ -23,7 +23,7 @@ export class AwsStackStack extends cdk.Stack {
     const lambda_api = new lambda.Function(this, "LAMBDA_API", {
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("../backend/aws-lambda/lambda_function.zip"),
-      handler: "todo.handler",
+      handler: "vocabularydb-main.handler",
       environment: {
         TABLE_NAME: table.tableName,
       }
