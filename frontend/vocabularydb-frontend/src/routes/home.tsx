@@ -30,7 +30,7 @@ function Home() {
     return (
         <div>
             <h1>
-                Hi 👋 {userId}, welcome back!
+                Hi {userId} 👋, welcome back!
             </h1>
             <Table>
                 <Table.Thead>
