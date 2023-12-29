@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import { AppShell, Center, Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
 import {
@@ -10,9 +10,10 @@ import {
   IconUser,
   IconSettings,
   IconLogout,
-  IconSwitchHorizontal,
 } from '@tabler/icons-react';
 import VocabularyDBIcon from '../assets/vocabularydb_icon.png'
+import { useDispatch } from 'react-redux';
+import { checkSignedState } from '../redux-state/user/userSlice';
 
 interface NavbarLinkProps {
   icon: typeof IconHome2;
@@ -43,6 +44,8 @@ const mockdata = [
 
 export default function Root() {
   const [active, setActive] = useState(2);
+  const authDispatch = useDispatch();
+  const navigate = useNavigate();
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
@@ -52,6 +55,11 @@ export default function Root() {
       onClick={() => setActive(index)}
     />
   ));
+
+  const logout = () => {
+    authDispatch(checkSignedState(false));
+    navigate('/auth');
+  };
 
   return (
 
@@ -70,8 +78,7 @@ export default function Root() {
                     </div>
 
                     <Stack justify="center" gap={0}>
-                        <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-                        <NavbarLink icon={IconLogout} label="Logout" />
+                        <NavbarLink icon={IconLogout} onClick={logout} label="Logout" />
                     </Stack>
                 </nav>
             </AppShell.Navbar>
