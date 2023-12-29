@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Outlet } from 'react-router-dom'
 import { useState } from 'react';
 import { AppShell, Center, Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
@@ -13,7 +12,6 @@ import {
   IconLogout,
   IconSwitchHorizontal,
 } from '@tabler/icons-react';
-// import { MantineLogo } from '@mantinex/mantine-logo';
 import VocabularyDBIcon from '../assets/vocabularydb_icon.png'
 
 interface NavbarLinkProps {

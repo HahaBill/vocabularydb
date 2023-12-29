@@ -19,14 +19,6 @@ function Home() {
         getListVocabularies();
     }, []);
 
-    const displayTasks = (
-        <div>
-            {listVocabularies.map((vocab: Vocabulary) => (
-                vocab.vocab_name
-            ))}
-        </div>
-    );
-
     const tableRows = listVocabularies.map((vocab: Vocabulary) => (
         <Table.Tr key={vocab.vocab_id}>
             <Table.Td>{vocab.vocab_name}</Table.Td>
@@ -35,11 +27,10 @@ function Home() {
         </Table.Tr>
     ));
 
-
     return (
         <div>
             <h1>
-                Hi {userId}, welcome back!
+                Hi 👋 {userId}, welcome back!
             </h1>
             <Table>
                 <Table.Thead>
