@@ -1,30 +1,28 @@
 import { keys } from "@mantine/core";
 import TableRowData from "../model/TableRowData";
 
-function filterData(data: TableRowData[], search: string) {
-    const query = search.toLowerCase().trim();
-    return data.filter((item) =>
-      keys(data[0]).some((key) => item[key].toLowerCase().includes(query))
-    );
-}
-
 function sortData(data: TableRowData[], 
     payload: { sortBy: keyof TableRowData | null; reversed: boolean; search: string }) {
-    const { sortBy } = payload;
-  
-    if (!sortBy) {
-      return filterData(data, payload.search);
+    const { sortBy, reversed, search } = payload;
+
+    let filteredData = data;
+    if (search) {
+        const query = search.toLowerCase().trim();
+        filteredData = data.filter((item) =>
+            keys(item).some((key) => item[key].toLowerCase().includes(query))
+        );
     }
-  
-    return filterData(
-      [...data].sort((a, b) => {
-        if (payload.reversed) {
-          return b[sortBy].localeCompare(a[sortBy]);
-        }
-        return a[sortBy].localeCompare(b[sortBy]);
-      }),
-      payload.search
-    );
+
+    if (sortBy) {
+        filteredData.sort((a, b) => {
+            if (reversed) {
+                return b[sortBy].localeCompare(a[sortBy]);
+            }
+            return a[sortBy].localeCompare(b[sortBy]);
+        });
+    }
+
+    return filteredData;
 }
 
-export { filterData, sortData };
+export { sortData };

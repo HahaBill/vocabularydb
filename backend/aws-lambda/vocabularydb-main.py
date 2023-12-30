@@ -76,11 +76,12 @@ async def update_task(put_vocab_request: PutVocabularyRequest):
     table = _get_table()
     table.update_item(
         Key={"vocabulary_id": put_vocab_request.vocab_id},
-        UpdateExpression="SET vocab_definition = :vocab_definition, isLearned = :isLearned, vocab_example = :vocab_example",
+        UpdateExpression="SET vocab_definition = :vocab_definition, isLearned = :isLearned, vocab_example = :vocab_example, vocab_name = :vocab_name",
         ExpressionAttributeValues={
             ":vocab_definition": put_vocab_request.vocab_definition,
             ":isLearned": put_vocab_request.isLearned,
-            "vocab_example": put_vocab_request.vocab_example,
+            ":vocab_example": put_vocab_request.vocab_example,
+            ":vocab_name": put_vocab_request.vocab_example,
         },
         ReturnValues="ALL_NEW",
     )
