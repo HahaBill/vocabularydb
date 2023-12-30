@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Table } from '@mantine/core';
+import { Container, Table, Title } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import Vocabulary from '../model/Vocabulary';
 
 function Home() {
@@ -13,6 +14,10 @@ function Home() {
     const getListVocabularies = async() => {
         const response = await (await fetch(`${lambdaAPI}/list-vocabulary-learned/${userId}`)).json();
         setListVocabularies(response.vocabularies);
+    }
+
+    const addVocabulary = async() => {
+
     }
 
     React.useEffect(() => {
@@ -27,21 +32,31 @@ function Home() {
         </Table.Tr>
     ));
 
+    const form = useForm({
+        initialValues: {
+          vocabulary: '',
+          definition: '',
+          usage: '',
+        },
+    });
+
     return (
         <div>
-            <h1>
-                Hi {userId} 👋, welcome back!
-            </h1>
-            <Table>
-                <Table.Thead>
-                    <Table.Tr>
-                        <Table.Td>Vocabulary</Table.Td>
-                        <Table.Td>Definition</Table.Td>
-                        <Table.Td>Usage</Table.Td>
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>{tableRows}</Table.Tbody>
-            </Table>
+            <Container>
+                <Title className='text-white' order={1}> Hi {userId} 👋!</Title>
+            </Container>
+            <Container>
+                <Table withTableBorder className='bg-amber-200'>
+                    <Table.Thead>
+                        <Table.Tr>
+                            <Table.Td>Vocabulary</Table.Td>
+                            <Table.Td>Definition</Table.Td>
+                            <Table.Td>Usage</Table.Td>
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>{tableRows}</Table.Tbody>
+                </Table>
+            </Container>
         </div>
     )
 }
