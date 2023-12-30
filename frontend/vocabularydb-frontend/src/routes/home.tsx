@@ -1,17 +1,44 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Button, Container, Grid, Group, Table, TextInput, Textarea, Title } from '@mantine/core';
+import { Button, Container, Grid, Table, Textarea, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import Vocabulary from '../model/Vocabulary';
 import TableRowData from '../model/TableRowData';
 import { IconPlus } from '@tabler/icons-react';
+import { sortData, filterData } from '../util/helper_table';
 
 function Home() {
     const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
+    const emptyVocabularies: TableRowData[] = [{
+        word_phrases_sentence: "Nice to meet you", 
+        explanation: "The expression is used for greeting someone when you meet them for the first time, or for saying goodbye to them", 
+        usage: "As she was being introduced to the new manager, she said, \"Very nice to meet you, sir\""}]
 
-    const userId = useSelector((state: RootState) => state.user.userId);
+    // AWS Data
     const [listVocabularies, setListVocabularies] = React.useState([]);
+
+    // User ID
+    const userId = useSelector((state: RootState) => state.user.userId);
+
+    const [search, setSearch] = React.useState('');
+    const [sortedData, setSortedData] = React.useState(emptyVocabularies);
+    const [sortBy, setSortBy] = React.useState<keyof TableRowData | null>(null);
+    const [reverseSortDirection, setReverseSortDirection] = React.useState(false);
+
+    const setSorting = (field: keyof TableRowData) => {
+        const reversed = field === sortBy ? !reverseSortDirection : false;
+        setReverseSortDirection(reversed);
+        setSortBy(field);
+        setSortedData(sortData(listVocabularies, { sortBy: field, reversed, search }));
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget;
+        setSearch(value);
+        setSortedData(sortData(listVocabularies, { sortBy, reversed: reverseSortDirection, search: value }));
+    };
+    
 
     const getListVocabularies = async() => {
         const response = await (await fetch(`${lambdaAPI}/list-vocabulary-learned/${userId}`)).json();
@@ -26,11 +53,11 @@ function Home() {
         getListVocabularies();
     }, []);
 
-    const tableRows = listVocabularies.map((vocab: Vocabulary) => (
-        <Table.Tr key={vocab.vocab_id}>
-            <Table.Td>{vocab.vocab_name}</Table.Td>
-            <Table.Td>{vocab.vocab_definition}</Table.Td>
-            <Table.Td>{vocab.vocab_example}</Table.Td>
+    const tableRows = sortedData.map((vocab: TableRowData) => (
+        <Table.Tr key={vocab.word_phrases_sentence}>
+            <Table.Td>{vocab.word_phrases_sentence}</Table.Td>
+            <Table.Td>{vocab.explanation}</Table.Td>
+            <Table.Td>{vocab.usage}</Table.Td>
         </Table.Tr>
     ));
 
@@ -72,7 +99,7 @@ function Home() {
                                 radius="md"
                                 label="Usage"
                                 description="Input description"
-                                placeholder="Input placeholder"
+                                placeholder={"As she was being introduced to the new manager, she said, \"Very nice to meet you, sir\""}
                                 />
                             </Grid.Col>
                             <Grid.Col span={4}>

@@ -21,11 +21,10 @@ function sortData(data: TableRowData[],
         if (payload.reversed) {
           return b[sortBy].localeCompare(a[sortBy]);
         }
-  
         return a[sortBy].localeCompare(b[sortBy]);
       }),
       payload.search
     );
 }
 
-export default { filterData, sortData };
+export { filterData, sortData };
