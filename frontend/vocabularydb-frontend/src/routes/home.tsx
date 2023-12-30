@@ -4,6 +4,7 @@ import { RootState } from '../redux-state/store';
 import { Button, Container, Grid, Group, Table, TextInput, Textarea, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import Vocabulary from '../model/Vocabulary';
+import TableRowData from '../model/TableRowData';
 import { IconPlus } from '@tabler/icons-react';
 
 function Home() {
