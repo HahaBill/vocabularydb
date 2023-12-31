@@ -6,3 +6,12 @@ export default interface Vocabulary {
     user_id: string,
     isLearned: boolean,
 }
+
+export const initialVocabState = {
+    vocab_id: "",
+    vocab_name: "", 
+    vocab_definition: "", 
+    vocab_example: "",
+    isLearned: false,
+    user_id: "",
+};

@@ -2,28 +2,73 @@ import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
 import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import TableRowData from '../model/TableRowData';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { sortData } from '../util/helper_table';
 import TableTh from '../util/helper_table_th';
 import Vocabulary from '../model/Vocabulary';
+import { initialVocabState } from '../model/Vocabulary';
+import { v4 as uuidv4} from 'uuid';
 
 function Home() {
     const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
     const emptyVocabularies: TableRowData[] = [{
-        word_phrases_sentence: "Nice to meet you", 
+        word_phrases_sentence: "Nice to meet you (Example)", 
         explanation: "The expression is used for greeting someone when you meet them for the first time, or for saying goodbye to them", 
         usage: "As she was being introduced to the new manager, she said, \"Very nice to meet you, sir\""}]
 
-    // AWS Data
+
+    ////////////////// Redux  /////////////////
+
+    const userId = useSelector((state: RootState) => state.user.userId);
+
+    ////////////////// AWS /////////////////
+    
+
+    /// GET ///
     const [queryData, setQueryData] = React.useState(emptyVocabularies);
     const [originalData, setOriginalData] = React.useState(emptyVocabularies);
 
-    // User ID
-    const userId = useSelector((state: RootState) => state.user.userId);
+    const getListVocabularies = async() => {
+        const response = await (await fetch(`${lambdaAPI}/list-vocabulary-learned/${userId}`)).json();
+        const vocabularies = response.vocabularies.map((vocab: Vocabulary) => (
+            { word_phrases_sentence: vocab.vocab_name, explanation: vocab.vocab_definition, usage: vocab.vocab_example } as TableRowData
+        ))
+        setOriginalData(emptyVocabularies.concat(vocabularies));
+        setQueryData(emptyVocabularies.concat(vocabularies));
+    }
 
-    // MantineDev Table 
+    /// PUT ///
+    
+    const [newVocab, setNewVocab] = React.useState<Vocabulary>({
+        vocab_id: `vocab_${uuidv4()}`,
+        vocab_name: "", 
+        vocab_definition: "", 
+        vocab_example: "",
+        isLearned: false,
+        user_id: userId,
+    });
+
+    const handleNewVocabChange = (field: keyof Vocabulary, value: string) => {
+        setNewVocab(prevVocab => ({ ...prevVocab, [field]: value }));
+    } 
+
+    const handleAddVocabulary = async(event: React.FormEvent) => {
+        event.preventDefault();
+        await fetch(`${lambdaAPI}/create-vocab`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newVocab),
+        });
+  
+        getListVocabularies();
+        setNewVocab(initialVocabState)
+    }
+
+    ////////////////// Table  /////////////////
+
     const [search, setSearch] = React.useState('');
     const [sortBy, setSortBy] = React.useState<keyof TableRowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = React.useState(false);
@@ -40,19 +85,6 @@ function Home() {
         setSearch(value);
         setQueryData(sortData(originalData, { sortBy, reversed: reverseSortDirection, search: value }));
     };
-    
-    const getListVocabularies = async() => {
-        const response = await (await fetch(`${lambdaAPI}/list-vocabulary-learned/${userId}`)).json();
-        const vocabularies = response.vocabularies.map((vocab: Vocabulary) => (
-            { word_phrases_sentence: vocab.vocab_name, explanation: vocab.vocab_definition, usage: vocab.vocab_example } as TableRowData
-        ))
-        setOriginalData(emptyVocabularies.concat(vocabularies));
-        setQueryData(emptyVocabularies.concat(vocabularies));
-    }
-
-    const addVocabulary = async() => {
-
-    }
 
     React.useEffect(() => {
         getListVocabularies();
@@ -66,14 +98,6 @@ function Home() {
         </Table.Tr>
     ));
 
-    const form = useForm({
-        initialValues: {
-          vocabulary: '',
-          definition: '',
-          usage: '',
-        },
-    });
-
     return (
         <div className='w-full h-full'>
             <Container className='rounded-lg bg-white'>
@@ -83,7 +107,7 @@ function Home() {
                 <Grid className="w-full h-full">
                     <Grid.Col span={12}>
                         <Container className='absolute top-12 right-9 w-11/12'>
-                            <form onSubmit={form.onSubmit(() => console.log('LOL'))}>
+                            <form onSubmit={handleAddVocabulary}>
                                 <Grid>
                                     <Grid.Col span={4}>
                                         <Textarea
@@ -91,6 +115,8 @@ function Home() {
                                         label="Word-Phrase-Sentence"
                                         description="A list or collection of words or of words and phrases"
                                         placeholder="Nice to meet you"
+                                        value={newVocab.vocab_name}
+                                        onChange={(event) => handleNewVocabChange('vocab_name', event.target.value)}
                                         />
                                     </Grid.Col>
                                     <Grid.Col span={4}>
@@ -99,6 +125,8 @@ function Home() {
                                         label="Explanation"
                                         description="A statement or account that makes something clear"
                                         placeholder="The expression is used for greeting someone when you meet them for the first time, or for saying goodbye to them"
+                                        value={newVocab.vocab_definition}
+                                        onChange={(event) => handleNewVocabChange('vocab_definition', event.target.value)}
                                         />
                                     </Grid.Col>
                                     <Grid.Col span={4}>
@@ -107,6 +135,8 @@ function Home() {
                                         label="Usage"
                                         description="The way in which a word or phrase is normally and correctly used"
                                         placeholder={"As she was being introduced to the new manager, she said, \"Very nice to meet you, sir\""}
+                                        value={newVocab.vocab_example}
+                                        onChange={(event) => handleNewVocabChange('vocab_example', event.target.value)}
                                         />
                                     </Grid.Col>
                                     <Grid.Col span={4}>
@@ -116,7 +146,7 @@ function Home() {
                                         {/* Grid 5 */}
                                     </Grid.Col>
                                     <Grid.Col span={4}>
-                                    <Button className='absolute right-4 bg-gradient-to-r from-amber-200 to-emerald-300' variant='default' leftSection={<IconPlus size={14} />}>
+                                    <Button type="submit" className='absolute right-4 bg-gradient-to-r from-amber-200 to-emerald-300' variant='default' leftSection={<IconPlus size={14} />}>
                                         Add
                                     </Button>
                                     </Grid.Col>
