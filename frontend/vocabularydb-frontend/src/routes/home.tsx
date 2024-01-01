@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol, Menu, Divider, Checkbox } from '@mantine/core';
+import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol, Menu } from '@mantine/core';
 import TableRowData from '../model/TableRowData';
 import { IconEditCircle, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { sortData } from '../util/helper_table';
@@ -67,11 +67,23 @@ function Home() {
         setNewVocab(initialVocabState)
     }
 
-    ////////////////// Table  /////////////////
+    const handleUpdateVocabulary = async(vocab_id: string) => {
 
+    }
+
+    const handleDeleteVocabulary = async(vocab_id: string) => {
+
+    }
+
+    ////////////////// Table  /////////////////
+ 
     const [search, setSearch] = React.useState('');
     const [sortBy, setSortBy] = React.useState<keyof TableRowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = React.useState(false);
+    const [isMenuVisible, setIsMenuVisible] = React.useState(false);
+    const [menuPosition, setMenuPosition] = React.useState({ top: 0, left: 0 });
+    const menuRef = React.useRef(null);
+
 
     const setSorting = (field: keyof TableRowData) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -86,44 +98,66 @@ function Home() {
         setQueryData(sortData(originalData, { sortBy, reversed: reverseSortDirection, search: value }));
     };
 
-    const handleRowClick = (vocab_id: string) => {
-        console.log("CLICKED! " + vocab_id);
-    }
+    // @ts-expect-error: event 
+    const handleClickOutside = (event) => {
+         // @ts-expect-error: contains
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+            setIsMenuVisible(false);
+        }
+    };
+
+    // @ts-expect-error: event 
+    const handleRowClick = (event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setMenuPosition({
+            top: rect.top + window.scrollY,
+            left: rect.right + window.scrollX,
+        });
+        setIsMenuVisible(!isMenuVisible);
+    };
 
     React.useEffect(() => {
         getListVocabularies();
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const tableRows = queryData.map((vocab: TableRowData) => (
-        <Table.Tr className="hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 cursor-pointer" key={vocab.word_phrases_sentence} onClick={() => handleRowClick(vocab.word_phrases_sentence)}>
-             {/* <Table.Td>
-                <Menu>
-                    <Menu.Target>
-                        <Button>Toggle menu</Button>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                        <Menu.Item
-                        leftSection={<IconEditCircle style={{ width: rem(14), height: rem(14) }} />}
-                        >
-                        Update 
-                        </Menu.Item>
-                        <Menu.Item
-                        color="red"
-                        leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
-                        >
-                        Delete
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
-            </Table.Td> */}
+        <Table.Tr 
+        className="hover:bg-amber-100 active:bg-amber-200 cursor-pointer" 
+        key={vocab.word_phrases_sentence} 
+        onClick={(event) => handleRowClick(event)}>
             <Table.Td>{vocab.word_phrases_sentence}</Table.Td>
             <Table.Td>{vocab.explanation}</Table.Td>
             <Table.Td>{vocab.usage}</Table.Td>
-            {/* <Table.Td>
-            <Checkbox
-            
-            />
-            </Table.Td> */}
+            <Menu
+            styles={{
+                dropdown: { 
+                    position: 'absolute',
+                    top: `${menuPosition.top}px`, 
+                    left: `${menuPosition.left}px`,
+                }
+            }}
+            opened={isMenuVisible}>
+                <Menu.Dropdown ref={menuRef}>
+                    <Menu.Item
+                        onClick={() => handleUpdateVocabulary(vocab.word_phrases_sentence)}
+                        leftSection={<IconEditCircle style={{ width: rem(14), height: rem(14) }} />}
+                    >
+                        Update 
+                    </Menu.Item>
+                    <Menu.Item
+                        onClick={() => handleDeleteVocabulary(vocab.word_phrases_sentence)}
+                        color="red"
+                        leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+                    >
+                        Delete
+                    </Menu.Item>
+                </Menu.Dropdown>
+            </Menu>
         </Table.Tr>
     ));
 
