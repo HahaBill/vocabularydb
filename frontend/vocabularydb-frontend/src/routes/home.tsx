@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol } from '@mantine/core';
+import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol, Menu, Divider, Checkbox } from '@mantine/core';
 import TableRowData from '../model/TableRowData';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconEditCircle, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { sortData } from '../util/helper_table';
 import TableTh from '../util/helper_table_th';
 import Vocabulary from '../model/Vocabulary';
@@ -43,7 +43,7 @@ function Home() {
     const [newVocab, setNewVocab] = React.useState<Vocabulary>({
         vocab_id: `vocab_${uuidv4()}`,
         vocab_name: "", 
-        vocab_definition: "", 
+        vocab_definition: "",
         vocab_example: "",
         isLearned: false,
         user_id: userId,
@@ -86,15 +86,44 @@ function Home() {
         setQueryData(sortData(originalData, { sortBy, reversed: reverseSortDirection, search: value }));
     };
 
+    const handleRowClick = (vocab_id: string) => {
+        console.log("CLICKED! " + vocab_id);
+    }
+
     React.useEffect(() => {
         getListVocabularies();
     }, []);
 
     const tableRows = queryData.map((vocab: TableRowData) => (
-        <Table.Tr key={vocab.word_phrases_sentence}>
+        <Table.Tr className="hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 cursor-pointer" key={vocab.word_phrases_sentence} onClick={() => handleRowClick(vocab.word_phrases_sentence)}>
+             {/* <Table.Td>
+                <Menu>
+                    <Menu.Target>
+                        <Button>Toggle menu</Button>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Item
+                        leftSection={<IconEditCircle style={{ width: rem(14), height: rem(14) }} />}
+                        >
+                        Update 
+                        </Menu.Item>
+                        <Menu.Item
+                        color="red"
+                        leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+                        >
+                        Delete
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+            </Table.Td> */}
             <Table.Td>{vocab.word_phrases_sentence}</Table.Td>
             <Table.Td>{vocab.explanation}</Table.Td>
             <Table.Td>{vocab.usage}</Table.Td>
+            {/* <Table.Td>
+            <Checkbox
+            
+            />
+            </Table.Td> */}
         </Table.Tr>
     ));
 
