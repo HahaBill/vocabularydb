@@ -13,6 +13,7 @@ import { v4 as uuidv4} from 'uuid';
 function Home() {
     const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
     const emptyVocabularies: TableRowData[] = [{
+        vocab_id: "2539c659-f318-454f-b285-18c31797aaa0",
         word_phrases_sentence: "Nice to meet you (Example)", 
         explanation: "The expression is used for greeting someone when you meet them for the first time, or for saying goodbye to them", 
         usage: "As she was being introduced to the new manager, she said, \"Very nice to meet you, sir\""}]
@@ -32,7 +33,7 @@ function Home() {
     const getListVocabularies = async() => {
         const response = await (await fetch(`${lambdaAPI}/list-vocabulary-learned/${userId}`)).json();
         const vocabularies = response.vocabularies.map((vocab: Vocabulary) => (
-            { word_phrases_sentence: vocab.vocab_name, explanation: vocab.vocab_definition, usage: vocab.vocab_example } as TableRowData
+            { vocab_id: vocab.vocab_id, word_phrases_sentence: vocab.vocab_name, explanation: vocab.vocab_definition, usage: vocab.vocab_example } as TableRowData
         ))
         setOriginalData(emptyVocabularies.concat(vocabularies));
         setQueryData(emptyVocabularies.concat(vocabularies));
@@ -67,12 +68,20 @@ function Home() {
         setNewVocab(initialVocabState)
     }
 
-    const handleUpdateVocabulary = async(vocab_id: string) => {
-
+    const handleUpdateVocabulary = async(update_vocab_id: string) => {
+       
     }
 
-    const handleDeleteVocabulary = async(vocab_id: string) => {
+    const handleDeleteVocabulary = async(delete_vocab_id: string) => {
+        const newVocabList = originalData.filter((vocab) => vocab.vocab_id !== delete_vocab_id);
+        setOriginalData(newVocabList);
+        setQueryData(newVocabList);
 
+        // Delete task from table.
+        const response = await fetch(`${lambdaAPI}/delete-vocab/${delete_vocab_id}`, {
+        method: "DELETE",
+        });
+        console.log(response);
     }
 
     ////////////////// Table  /////////////////
@@ -144,13 +153,13 @@ function Home() {
             opened={isMenuVisible}>
                 <Menu.Dropdown ref={menuRef}>
                     <Menu.Item
-                        onClick={() => handleUpdateVocabulary(vocab.word_phrases_sentence)}
+                        onClick={() => handleUpdateVocabulary(vocab.vocab_id)}
                         leftSection={<IconEditCircle style={{ width: rem(14), height: rem(14) }} />}
                     >
                         Update 
                     </Menu.Item>
                     <Menu.Item
-                        onClick={() => handleDeleteVocabulary(vocab.word_phrases_sentence)}
+                        onClick={() => handleDeleteVocabulary(vocab.vocab_id)}
                         color="red"
                         leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
                     >
