@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol, Menu } from '@mantine/core';
+import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol, Menu, Popover, Modal } from '@mantine/core';
 import TableRowData from '../model/TableRowData';
 import { IconEditCircle, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { sortData } from '../util/helper_table';
@@ -9,6 +9,7 @@ import TableTh from '../util/helper_table_th';
 import Vocabulary from '../model/Vocabulary';
 import { initialVocabState } from '../model/Vocabulary';
 import { v4 as uuidv4} from 'uuid';
+import { useDisclosure } from '@mantine/hooks';
 
 function Home() {
     const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
@@ -92,6 +93,7 @@ function Home() {
     const [isMenuVisible, setIsMenuVisible] = React.useState(false);
     const [menuPosition, setMenuPosition] = React.useState({ top: 0, left: 0 });
     const menuRef = React.useRef(null);
+    const [opened, { open, close }] = useDisclosure(false);
 
 
     const setSorting = (field: keyof TableRowData) => {
@@ -153,10 +155,10 @@ function Home() {
             opened={isMenuVisible}>
                 <Menu.Dropdown ref={menuRef}>
                     <Menu.Item
-                        onClick={() => handleUpdateVocabulary(vocab.vocab_id)}
+                        onClick={open}
                         leftSection={<IconEditCircle style={{ width: rem(14), height: rem(14) }} />}
                     >
-                        Update 
+                        Update
                     </Menu.Item>
                     <Menu.Item
                         onClick={() => handleDeleteVocabulary(vocab.vocab_id)}
@@ -165,6 +167,8 @@ function Home() {
                     >
                         Delete
                     </Menu.Item>
+                    
+                    
                 </Menu.Dropdown>
             </Menu>
         </Table.Tr>
@@ -226,6 +230,9 @@ function Home() {
                             </form>
                         </Container>
                     </Grid.Col>
+                    <Modal opened={opened} onClose={close} title="Authentication">
+                    {/* Modal content */}
+                    </Modal>
                     <Grid.Col span={12} style={{ height: '220px' }}/>
                     <GridCol span={12}>
                         <Container className='overflow-auto max-h-80'>
