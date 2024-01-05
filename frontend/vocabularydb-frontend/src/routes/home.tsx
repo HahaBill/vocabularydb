@@ -1,16 +1,16 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Button, Container, Grid, ScrollArea, Table, TextInput, Textarea, Title, rem, Text, GridCol, Menu, Popover, Modal } from '@mantine/core';
+import { Container, Grid, ScrollArea, Table, TextInput, Title, rem, Text, GridCol, Menu, Modal } from '@mantine/core';
 import TableRowData from '../model/TableRowData';
-import { IconEditCircle, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconEditCircle, IconSearch, IconTrash } from '@tabler/icons-react';
 import { sortData } from '../util/helper_table';
-import TableTh from '../util/helper_table_th';
 import Vocabulary from '../model/Vocabulary';
 import { initialVocabState } from '../model/Vocabulary';
 import { v4 as uuidv4} from 'uuid';
 import { useDisclosure } from '@mantine/hooks';
 import FormVocabulary from '../components/Home/FormVocabulary';
+import TableVocabulary from '../components/Home/TableVocabulary';
 
 function Home() {
     const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
@@ -140,7 +140,7 @@ function Home() {
     const tableRows = queryData.map((vocab: TableRowData) => (
         <Table.Tr 
         className="hover:bg-amber-100 active:bg-amber-200 cursor-pointer" 
-        key={vocab.word_phrases_sentence} 
+        key={vocab.vocab_id} 
         onClick={(event) => handleRowClick(event)}>
             <Table.Td>{vocab.word_phrases_sentence}</Table.Td>
             <Table.Td>{vocab.explanation}</Table.Td>
@@ -168,8 +168,6 @@ function Home() {
                     >
                         Delete
                     </Menu.Item>
-                    
-                    
                 </Menu.Dropdown>
             </Menu>
         </Table.Tr>
@@ -193,55 +191,15 @@ function Home() {
                     <Grid.Col span={12} style={{ height: '220px' }}/>
                     <GridCol span={12}>
                         <Container className='overflow-auto max-h-80'>
-                            <ScrollArea>
-                                <TextInput
-                                placeholder="Search by any field"
-                                mb="md"
-                                leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                                value={search}
-                                onChange={handleSearchChange}
-                                /> 
-                                <Table className="h-16" horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
-                                    <Table.Tbody>
-                                    <Table.Tr>
-                                        <TableTh
-                                        sorted={sortBy === 'word_phrases_sentence'}
-                                        reversed={reverseSortDirection}
-                                        onSort={() => setSorting('word_phrases_sentence')}
-                                        >
-                                        Word-Phrases-Sentence
-                                        </TableTh>
-                                        <TableTh
-                                        sorted={sortBy === 'explanation'}
-                                        reversed={reverseSortDirection}
-                                        onSort={() => setSorting('explanation')}
-                                        >
-                                        Explanation
-                                        </TableTh>
-                                        <TableTh
-                                        sorted={sortBy === 'usage'}
-                                        reversed={reverseSortDirection}
-                                        onSort={() => setSorting('usage')}
-                                        >
-                                        Usage
-                                        </TableTh>
-                                    </Table.Tr>
-                                    </Table.Tbody>
-                                    <Table.Tbody>
-                                    {(tableRows.length > 0) ? (
-                                        tableRows
-                                    ) : (
-                                        <Table.Tr>
-                                        <Table.Td colSpan={Object.keys(emptyVocabularies[0]).length}>
-                                            <Text fw={500} ta="center">
-                                            Nothing found
-                                            </Text>
-                                        </Table.Td>
-                                        </Table.Tr>
-                                    )}
-                                    </Table.Tbody>
-                                </Table>
-                            </ScrollArea>
+                            <TableVocabulary 
+                            search={search} 
+                            handleSearchChange={handleSearchChange} 
+                            sortBy={sortBy} 
+                            reverseSortDirection={reverseSortDirection}
+                            setSorting={setSorting}
+                            emptyVocabularies={emptyVocabularies}
+                            tableRows={tableRows}
+                            />
                         </Container> 
                     </GridCol>
                 </Grid>                   

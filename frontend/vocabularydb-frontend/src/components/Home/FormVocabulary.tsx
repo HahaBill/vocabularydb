@@ -2,7 +2,6 @@ import { Button, Grid, Textarea } from "@mantine/core"
 import { IconPlus } from "@tabler/icons-react";
 
 export default function FormVocabulary(props) {
-
     return (
         <form onSubmit={props.handleVocabulary}>
             <Grid>
