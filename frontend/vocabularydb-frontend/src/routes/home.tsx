@@ -10,6 +10,7 @@ import Vocabulary from '../model/Vocabulary';
 import { initialVocabState } from '../model/Vocabulary';
 import { v4 as uuidv4} from 'uuid';
 import { useDisclosure } from '@mantine/hooks';
+import FormVocabulary from '../components/Home/FormVocabulary';
 
 function Home() {
     const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
@@ -183,55 +184,11 @@ function Home() {
                 <Grid className="w-full h-full">
                     <Grid.Col span={12}>
                         <Container className='absolute top-12 right-9 w-11/12'>
-                            <form onSubmit={handleAddVocabulary}>
-                                <Grid>
-                                    <Grid.Col span={4}>
-                                        <Textarea
-                                        radius="md"
-                                        label="Word-Phrase-Sentence"
-                                        description="A list or collection of words or of words and phrases"
-                                        placeholder="Nice to meet you"
-                                        value={newVocab.vocab_name}
-                                        onChange={(event) => handleNewVocabChange('vocab_name', event.target.value)}
-                                        />
-                                    </Grid.Col>
-                                    <Grid.Col span={4}>
-                                        <Textarea
-                                        radius="md"
-                                        label="Explanation"
-                                        description="A statement or account that makes something clear"
-                                        placeholder="The expression is used for greeting someone when you meet them for the first time, or for saying goodbye to them"
-                                        value={newVocab.vocab_definition}
-                                        onChange={(event) => handleNewVocabChange('vocab_definition', event.target.value)}
-                                        />
-                                    </Grid.Col>
-                                    <Grid.Col span={4}>
-                                        <Textarea
-                                        radius="md"
-                                        label="Usage"
-                                        description="The way in which a word or phrase is normally and correctly used"
-                                        placeholder={"As she was being introduced to the new manager, she said, \"Very nice to meet you, sir\""}
-                                        value={newVocab.vocab_example}
-                                        onChange={(event) => handleNewVocabChange('vocab_example', event.target.value)}
-                                        />
-                                    </Grid.Col>
-                                    <Grid.Col span={4}>
-                                        {/* Grid 4 */}
-                                    </Grid.Col>
-                                    <Grid.Col span={4}>
-                                        {/* Grid 5 */}
-                                    </Grid.Col>
-                                    <Grid.Col span={4}>
-                                    <Button type="submit" className='absolute right-4 bg-gradient-to-r from-amber-200 to-emerald-300' variant='default' leftSection={<IconPlus size={14} />}>
-                                        Add
-                                    </Button>
-                                    </Grid.Col>
-                                </Grid>  
-                            </form>
+                            <FormVocabulary newVocab={newVocab} handleVocabulary={handleAddVocabulary} handleNewVocabChange={handleNewVocabChange}/>
                         </Container>
                     </Grid.Col>
                     <Modal opened={opened} onClose={close} title="Authentication">
-                    {/* Modal content */}
+                        <FormVocabulary newVocab={newVocab} handleVocabulary={handleUpdateVocabulary} handleNewVocabChange={handleNewVocabChange}/>
                     </Modal>
                     <Grid.Col span={12} style={{ height: '220px' }}/>
                     <GridCol span={12}>
