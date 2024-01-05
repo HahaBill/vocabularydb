@@ -13,7 +13,7 @@ import FormVocabulary from '../components/Home/FormVocabulary';
 import TableVocabulary from '../components/Home/TableVocabulary';
 
 function Home() {
-    const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/";
+    const lambdaAPI = "https://4k6jq6ypdpxyzmdnxul6i6y4ke0krgjw.lambda-url.us-east-1.on.aws/vocab_crud";
     const emptyVocabularies: TableRowData[] = [{
         vocab_id: "2539c659-f318-454f-b285-18c31797aaa0",
         word_phrases_sentence: "Nice to meet you (Example)", 
