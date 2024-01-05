@@ -187,7 +187,7 @@ function Home() {
                             <FormVocabulary newVocab={newVocab} handleVocabulary={handleAddVocabulary} handleNewVocabChange={handleNewVocabChange}/>
                         </Container>
                     </Grid.Col>
-                    <Modal opened={opened} onClose={close} title="Authentication">
+                    <Modal className='absolute left-80 h-5/5' opened={opened} onClose={close} size="xl" title="Update the Vocabulary">
                         <FormVocabulary newVocab={newVocab} handleVocabulary={handleUpdateVocabulary} handleNewVocabChange={handleNewVocabChange}/>
                     </Modal>
                     <Grid.Col span={12} style={{ height: '220px' }}/>
