@@ -6,7 +6,7 @@ VocabularyDB is an open-source application that allows users to store words, phr
 
 Technologies used: Python, Typescript, FastAPI, Pydantic, React, Redux, AWS CDK, boto3, DynamoDB
 
-Deployed on Netflify: vocabularydb.netlify.app
+Deployed on Netflify: [vocabularydb.netlify.app](https://vocabularydb.netlify.app)
 
 # 🚀 Getting started
 
