@@ -72,8 +72,15 @@ function Home() {
 
     const handleUpdateVocabulary = async(event: React.FormEvent) => {
         event.preventDefault();
-        console.log(`Clicked Vocab ID: ${clickedVocabId}`)
-        setNewVocab({...newVocab, vocab_id: clickedVocabId})
+        console.log(`UPDATE-Clicked Vocab ID: ${clickedVocabId}`)
+        console.log(`USER ID: ${userId}`)
+        console.log(newVocab)
+        // const updatedVocab = {
+        //     ...newVocab,
+        //     vocab_id: clickedVocabId
+        // };
+        console.log(newVocab)
+        
 
         const response = await fetch(`${lambdaAPI}/update-vocabulary`, {
             method: "PUT",
@@ -130,8 +137,6 @@ function Home() {
          // @ts-expect-error: contains
         if (menuRef.current && !menuRef.current.contains(event.target)) {
             setIsMenuVisible(false);
-            console.log(`Clicked Vocab ID: ${clickedVocabId}`)
-            setClickedVocabId("")
         }
     };
 
@@ -144,8 +149,13 @@ function Home() {
         });
         setIsMenuVisible(!isMenuVisible);
         setClickedVocabId(vocab_id)
-        console.log(`Clicked Vocab ID: ${clickedVocabId}`)
+        console.log(`ROW-Clicked Vocab ID: ${clickedVocabId}`)
     };
+
+    const openUpdateVocab = () => {
+        open();
+        setNewVocab({...newVocab, vocab_id: clickedVocabId})
+    }
 
     React.useEffect(() => {
         getListVocabularies();
@@ -175,7 +185,7 @@ function Home() {
             opened={isMenuVisible}>
                 <Menu.Dropdown ref={menuRef}>
                     <Menu.Item
-                        onClick={open}
+                        onClick={openUpdateVocab}
                         leftSection={<IconEditCircle style={{ width: rem(14), height: rem(14) }} />}
                     >
                         Update

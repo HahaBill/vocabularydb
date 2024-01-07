@@ -74,17 +74,17 @@ async def list_tasks(user_id: str):
 async def update_task(put_vocab_request: PutVocabularyRequest):
     table = _get_table()
     table.update_item(
-        Key={"vocabulary_id": put_vocab_request.vocab_id},
+        Key={"vocab_id": put_vocab_request.vocab_id},
         UpdateExpression="SET vocab_definition = :vocab_definition, isLearned = :isLearned, vocab_example = :vocab_example, vocab_name = :vocab_name",
         ExpressionAttributeValues={
             ":vocab_definition": put_vocab_request.vocab_definition,
             ":isLearned": put_vocab_request.isLearned,
             ":vocab_example": put_vocab_request.vocab_example,
-            ":vocab_name": put_vocab_request.vocab_example,
+            ":vocab_name": put_vocab_request.vocab_name,
         },
         ReturnValues="ALL_NEW",
     )
-    return {"update_task_id": put_vocab_request.task_id}
+    return {"update_vocab_id": put_vocab_request.vocab_id}
 
 
 @router.delete("/delete-vocab/{vocab_id}")
