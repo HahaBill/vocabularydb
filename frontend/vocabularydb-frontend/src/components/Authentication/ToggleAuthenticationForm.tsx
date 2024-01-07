@@ -19,7 +19,8 @@ import { checkSignedState, updateUserId } from '../../redux-state/user/userSlice
 import { useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-function ToggleAuthenticationForm(props: any) {
+// @ts-expect-error: props
+function ToggleAuthenticationForm(props) {
     const [type, toggle] = useToggle(['login', 'register']);
     const authDispatch = useDispatch();
     const navigate = useNavigate();
@@ -37,6 +38,7 @@ function ToggleAuthenticationForm(props: any) {
         },
     });
 
+    // @ts-expect-error: values
     const handleSubmit = (values) => {
       authDispatch(updateUserId( values.email));
       authDispatch(checkSignedState(true));

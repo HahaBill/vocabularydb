@@ -3,6 +3,7 @@ import { IconSearch } from "@tabler/icons-react";
 import TableTh from "../../util/helper_table_th";
 import { useEffect } from "react";
 
+// @ts-expect-error: props
 export default function TableVocabulary(props) {
 
     useEffect (() => {

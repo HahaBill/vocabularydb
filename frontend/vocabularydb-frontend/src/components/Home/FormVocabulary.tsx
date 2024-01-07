@@ -1,6 +1,7 @@
 import { Button, Grid, Textarea } from "@mantine/core"
 import { IconPlus } from "@tabler/icons-react";
 
+// @ts-expect-error: props
 export default function FormVocabulary(props) {
     return (
         <form onSubmit={props.handleVocabulary}>
