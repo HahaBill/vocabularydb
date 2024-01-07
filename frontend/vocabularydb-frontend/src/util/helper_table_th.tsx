@@ -18,4 +18,4 @@ export default function TableTh({ children, reversed, sorted, onSort }: TableThP
         </UnstyledButton>
       </Table.Th>
     );
-  }
+}

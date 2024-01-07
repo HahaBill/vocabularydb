@@ -54,7 +54,7 @@ function Home() {
 
     const handleNewVocabChange = (field: keyof Vocabulary, value: string) => {
         setNewVocab(prevVocab => ({ ...prevVocab, [field]: value }));
-    } 
+    }
 
     const handleAddVocabulary = async(event: React.FormEvent) => {
         event.preventDefault();
