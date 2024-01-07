@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux-state/store';
-import { Container, Grid, ScrollArea, Table, TextInput, Title, rem, Text, GridCol, Menu, Modal } from '@mantine/core';
+import { Container, Grid, Table, Title, rem, GridCol, Menu, Modal } from '@mantine/core';
 import TableRowData from '../model/TableRowData';
-import { IconEditCircle, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconEditCircle, IconTrash } from '@tabler/icons-react';
 import { sortData } from '../util/helper_table';
 import Vocabulary from '../model/Vocabulary';
 import { initialVocabState } from '../model/Vocabulary';
@@ -44,7 +44,7 @@ function Home() {
     /// PUT ///
     
     const [newVocab, setNewVocab] = React.useState<Vocabulary>({
-        vocab_id: `vocab_${uuidv4()}`,
+        vocab_id: `vocabulary_${uuidv4()}`,
         vocab_name: "", 
         vocab_definition: "",
         vocab_example: "",
@@ -70,8 +70,22 @@ function Home() {
         setNewVocab(initialVocabState)
     }
 
-    const handleUpdateVocabulary = async(update_vocab_id: string) => {
-       
+    const handleUpdateVocabulary = async(event: React.FormEvent) => {
+        event.preventDefault();
+        console.log(`Clicked Vocab ID: ${clickedVocabId}`)
+        setNewVocab({...newVocab, vocab_id: clickedVocabId})
+
+        const response = await fetch(`${lambdaAPI}/update-vocabulary`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newVocab),
+        })
+        console.log(response);
+        getListVocabularies()
+        setNewVocab(initialVocabState)
+        setClickedVocabId("")
     }
 
     const handleDeleteVocabulary = async(delete_vocab_id: string) => {
@@ -95,6 +109,7 @@ function Home() {
     const [menuPosition, setMenuPosition] = React.useState({ top: 0, left: 0 });
     const menuRef = React.useRef(null);
     const [opened, { open, close }] = useDisclosure(false);
+    const [clickedVocabId, setClickedVocabId] = React.useState("")
 
 
     const setSorting = (field: keyof TableRowData) => {
@@ -115,17 +130,21 @@ function Home() {
          // @ts-expect-error: contains
         if (menuRef.current && !menuRef.current.contains(event.target)) {
             setIsMenuVisible(false);
+            console.log(`Clicked Vocab ID: ${clickedVocabId}`)
+            setClickedVocabId("")
         }
     };
 
     // @ts-expect-error: event 
-    const handleRowClick = (event) => {
+    const handleRowClick = (event, vocab_id) => {
         const rect = event.currentTarget.getBoundingClientRect();
         setMenuPosition({
             top: rect.top + window.scrollY,
             left: rect.right + window.scrollX,
         });
         setIsMenuVisible(!isMenuVisible);
+        setClickedVocabId(vocab_id)
+        console.log(`Clicked Vocab ID: ${clickedVocabId}`)
     };
 
     React.useEffect(() => {
@@ -141,7 +160,7 @@ function Home() {
         <Table.Tr 
         className="hover:bg-amber-100 active:bg-amber-200 cursor-pointer" 
         key={vocab.vocab_id} 
-        onClick={(event) => handleRowClick(event)}>
+        onClick={(event) => handleRowClick(event, vocab.vocab_id)}>
             <Table.Td>{vocab.word_phrases_sentence}</Table.Td>
             <Table.Td>{vocab.explanation}</Table.Td>
             <Table.Td>{vocab.usage}</Table.Td>
