@@ -41,7 +41,7 @@ function Home() {
         setQueryData(emptyVocabularies.concat(vocabularies));
     }
 
-    /// PUT ///
+    /// POST ///
     
     const [newVocab, setNewVocab] = React.useState<Vocabulary>({
         vocab_id: `vocabulary_${uuidv4()}`,
@@ -70,26 +70,17 @@ function Home() {
         setNewVocab(initialVocabState)
     }
 
+    /// PUT ///
+
     const handleUpdateVocabulary = async(event: React.FormEvent) => {
         event.preventDefault();
-        console.log(`UPDATE-Clicked Vocab ID: ${clickedVocabId}`)
-        console.log(`USER ID: ${userId}`)
-        console.log(newVocab)
-        // const updatedVocab = {
-        //     ...newVocab,
-        //     vocab_id: clickedVocabId
-        // };
-        console.log(newVocab)
-        
-
-        const response = await fetch(`${lambdaAPI}/update-vocabulary`, {
+        await fetch(`${lambdaAPI}/update-vocabulary`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(newVocab),
         })
-        console.log(response);
         getListVocabularies()
         setNewVocab(initialVocabState)
         setClickedVocabId("")
@@ -100,11 +91,9 @@ function Home() {
         setOriginalData(newVocabList);
         setQueryData(newVocabList);
 
-        // Delete task from table.
-        const response = await fetch(`${lambdaAPI}/delete-vocab/${delete_vocab_id}`, {
+        await fetch(`${lambdaAPI}/delete-vocab/${delete_vocab_id}`, {
         method: "DELETE",
         });
-        console.log(response);
     }
 
     ////////////////// Table  /////////////////
@@ -149,7 +138,6 @@ function Home() {
         });
         setIsMenuVisible(!isMenuVisible);
         setClickedVocabId(vocab_id)
-        console.log(`ROW-Clicked Vocab ID: ${clickedVocabId}`)
     };
 
     const openUpdateVocab = () => {
